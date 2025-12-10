@@ -1,0 +1,2677 @@
+{
+  "canvas": {
+    "version": "2.2.11",
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "zoomLevel": 1,
+    "show": {
+      "tableComment": true,
+      "columnComment": true,
+      "columnDataType": true,
+      "columnDefault": true,
+      "columnAutoIncrement": false,
+      "columnPrimaryKey": true,
+      "columnUnique": false,
+      "columnNotNull": true,
+      "relationship": true
+    },
+    "database": "MySQL",
+    "databaseName": "gourmet_review_db",
+    "canvasType": "ERD",
+    "language": "GraphQL",
+    "tableCase": "pascalCase",
+    "columnCase": "camelCase",
+    "highlightTheme": "VS2015",
+    "bracketType": "none",
+    "setting": {
+      "relationshipDataTypeSync": true,
+      "relationshipOptimization": false,
+      "columnOrder": [
+        "columnName",
+        "columnDataType",
+        "columnNotNull",
+        "columnUnique",
+        "columnAutoIncrement",
+        "columnDefault",
+        "columnComment"
+      ]
+    },
+    "pluginSerializationMap": {}
+  },
+  "table": {
+    "tables": [
+      {
+        "name": "MEMBER",
+        "comment": "사용자",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_id"
+          },
+          {
+            "name": "email",
+            "comment": "이메일",
+            "dataType": "VARCHAR(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": true,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_email"
+          },
+          {
+            "name": "nickname",
+            "comment": "닉네임",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": true,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_nickname"
+          },
+          {
+            "name": "role",
+            "comment": "권한 (USER, ADMIN)",
+            "dataType": "VARCHAR(20)",
+            "default": "'USER'",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_role"
+          },
+          {
+            "name": "tier",
+            "comment": "회원 등급 (BRONZE, SILVER, GOLD, GOURMET, BLACK)",
+            "dataType": "VARCHAR(20)",
+            "default": "'BRONZE'",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 200,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_tier"
+          },
+          {
+            "name": "helpful_count",
+            "comment": "누적 도움됨 수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 100,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_helpful_count"
+          },
+          {
+            "name": "review_count",
+            "comment": "누적 리뷰 수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 100,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_review_count"
+          },
+          {
+            "name": "violation_count",
+            "comment": "누적 위반 횟수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 90,
+              "widthComment": 100,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_violation_count"
+          },
+          {
+            "name": "last_review_at",
+            "comment": "마지막 리뷰 작성일시",
+            "dataType": "DATETIME",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 90,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_last_review_at"
+          },
+          {
+            "name": "is_deviation_target",
+            "comment": "편차 보정 대상 여부",
+            "dataType": "BOOLEAN",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 120,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_is_deviation_target"
+          },
+          {
+            "name": "created_at",
+            "comment": "가입일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "member_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 50,
+          "top": 50,
+          "zIndex": 1,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "table_member"
+      },
+      {
+        "name": "STORE",
+        "comment": "가게",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "가게 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_id"
+          },
+          {
+            "name": "name",
+            "comment": "가게명",
+            "dataType": "VARCHAR(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_name"
+          },
+          {
+            "name": "category_id",
+            "comment": "카테고리 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_category_id"
+          },
+          {
+            "name": "region_id",
+            "comment": "지역 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_region_id"
+          },
+          {
+            "name": "address",
+            "comment": "주소",
+            "dataType": "VARCHAR(200)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_address"
+          },
+          {
+            "name": "detailed_address",
+            "comment": "상세주소",
+            "dataType": "VARCHAR(200)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 100,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_detailed_address"
+          },
+          {
+            "name": "latitude",
+            "comment": "위도",
+            "dataType": "DECIMAL(10,8)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 90,
+              "widthDefault": 60
+            },
+            "id": "store_latitude"
+          },
+          {
+            "name": "longitude",
+            "comment": "경도",
+            "dataType": "DECIMAL(11,8)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 90,
+              "widthDefault": 60
+            },
+            "id": "store_longitude"
+          },
+          {
+            "name": "avg_rating",
+            "comment": "평균 평점",
+            "dataType": "DECIMAL(3,2)",
+            "default": "0.00",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "store_avg_rating"
+          },
+          {
+            "name": "score_weighted",
+            "comment": "가중 평점",
+            "dataType": "DECIMAL(3,2)",
+            "default": "0.00",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 90,
+              "widthComment": 60,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "store_score_weighted"
+          },
+          {
+            "name": "review_count",
+            "comment": "전체 리뷰 수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_review_count"
+          },
+          {
+            "name": "review_count_valid",
+            "comment": "유효 리뷰 수 (PUBLIC)",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 110,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_review_count_valid"
+          },
+          {
+            "name": "is_blind",
+            "comment": "블라인드 여부 (리뷰 5개 미만)",
+            "dataType": "BOOLEAN",
+            "default": "true",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 150,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_is_blind"
+          },
+          {
+            "name": "scrap_count",
+            "comment": "스크랩 수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_scrap_count"
+          },
+          {
+            "name": "view_count",
+            "comment": "조회수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_view_count"
+          },
+          {
+            "name": "price_range_lunch",
+            "comment": "점심 가격대",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 100,
+              "widthComment": 80,
+              "widthDataType": 70,
+              "widthDefault": 60
+            },
+            "id": "store_price_range_lunch"
+          },
+          {
+            "name": "price_range_dinner",
+            "comment": "저녁 가격대",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 110,
+              "widthComment": 80,
+              "widthDataType": 70,
+              "widthDefault": 60
+            },
+            "id": "store_price_range_dinner"
+          },
+          {
+            "name": "is_parking",
+            "comment": "주차 가능 여부",
+            "dataType": "BOOLEAN",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 90,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_is_parking"
+          },
+          {
+            "name": "created_at",
+            "comment": "등록일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "store_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 600,
+          "top": 50,
+          "zIndex": 2,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "table_store"
+      },
+      {
+        "name": "REVIEW",
+        "comment": "리뷰",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "리뷰 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_id"
+          },
+          {
+            "name": "store_id",
+            "comment": "가게 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_store_id"
+          },
+          {
+            "name": "member_id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_member_id"
+          },
+          {
+            "name": "content",
+            "comment": "리뷰 내용",
+            "dataType": "TEXT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_content"
+          },
+          {
+            "name": "score_taste",
+            "comment": "맛 점수",
+            "dataType": "DECIMAL(3,2)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "review_score_taste"
+          },
+          {
+            "name": "score_service",
+            "comment": "서비스 점수",
+            "dataType": "DECIMAL(3,2)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 80,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "review_score_service"
+          },
+          {
+            "name": "score_mood",
+            "comment": "분위기 점수",
+            "dataType": "DECIMAL(3,2)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 80,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "review_score_mood"
+          },
+          {
+            "name": "score_price",
+            "comment": "가격 점수",
+            "dataType": "DECIMAL(3,2)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "review_score_price"
+          },
+          {
+            "name": "score_calculated",
+            "comment": "계산된 종합 점수 (가중합)",
+            "dataType": "DECIMAL(3,2)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 100,
+              "widthComment": 150,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "review_score_calculated"
+          },
+          {
+            "name": "status",
+            "comment": "리뷰 상태 (PENDING, APPROVED, REJECTED, BLIND_HELD, PUBLIC, SUSPENDED)",
+            "dataType": "VARCHAR(20)",
+            "default": "'PENDING'",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 300,
+              "widthDataType": 80,
+              "widthDefault": 60
+            },
+            "id": "review_status"
+          },
+          {
+            "name": "is_revisit",
+            "comment": "재방문 여부",
+            "dataType": "BOOLEAN",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_is_revisit"
+          },
+          {
+            "name": "visit_date",
+            "comment": "방문일",
+            "dataType": "DATE",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_visit_date"
+          },
+          {
+            "name": "like_count",
+            "comment": "좋아요 수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_like_count"
+          },
+          {
+            "name": "admin_comment",
+            "comment": "관리자 코멘트 (반려 사유 등)",
+            "dataType": "TEXT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 90,
+              "widthComment": 150,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_admin_comment"
+          },
+          {
+            "name": "created_at",
+            "comment": "작성일시 (시간 감가상각 기준)",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 150,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "review_created_at"
+          },
+          {
+            "name": "updated_at",
+            "comment": "수정일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 250
+            },
+            "id": "review_updated_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 300,
+          "top": 400,
+          "zIndex": 3,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "table_review"
+      },
+      {
+        "name": "CATEGORY",
+        "comment": "카테고리 (계층구조)",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "카테고리 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "category_id"
+          },
+          {
+            "name": "name",
+            "comment": "카테고리명",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 80,
+              "widthDataType": 70,
+              "widthDefault": 60
+            },
+            "id": "category_name"
+          },
+          {
+            "name": "parent_id",
+            "comment": "상위 카테고리 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 100,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "category_parent_id"
+          },
+          {
+            "name": "depth",
+            "comment": "계층 깊이",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "category_depth"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1100,
+          "top": 50,
+          "zIndex": 4,
+          "widthName": 60,
+          "widthComment": 100
+        },
+        "visible": true,
+        "id": "table_category"
+      },
+      {
+        "name": "REGION",
+        "comment": "지역 (계층구조)",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "지역 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "region_id"
+          },
+          {
+            "name": "name",
+            "comment": "지역명",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 70,
+              "widthDefault": 60
+            },
+            "id": "region_name"
+          },
+          {
+            "name": "parent_id",
+            "comment": "상위 지역 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "region_parent_id"
+          },
+          {
+            "name": "depth",
+            "comment": "계층 깊이",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "region_depth"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1100,
+          "top": 300,
+          "zIndex": 5,
+          "widthName": 60,
+          "widthComment": 80
+        },
+        "visible": true,
+        "id": "table_region"
+      },
+      {
+        "name": "STORE_AWARD",
+        "comment": "가게 수상 이력",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "수상 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "award_id"
+          },
+          {
+            "name": "store_id",
+            "comment": "가게 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "award_store_id"
+          },
+          {
+            "name": "award_name",
+            "comment": "수상명",
+            "dataType": "VARCHAR(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 60,
+              "widthDataType": 90,
+              "widthDefault": 60
+            },
+            "id": "award_name"
+          },
+          {
+            "name": "award_grade",
+            "comment": "수상 등급",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 60,
+              "widthDataType": 70,
+              "widthDefault": 60
+            },
+            "id": "award_grade"
+          },
+          {
+            "name": "award_year",
+            "comment": "수상 연도",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "award_year"
+          },
+          {
+            "name": "created_at",
+            "comment": "등록일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "award_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 900,
+          "top": 400,
+          "zIndex": 6,
+          "widthName": 90,
+          "widthComment": 80
+        },
+        "visible": true,
+        "id": "table_store_award"
+      },
+      {
+        "name": "REVIEW_IMAGE",
+        "comment": "리뷰 이미지",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "이미지 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_image_id"
+          },
+          {
+            "name": "review_id",
+            "comment": "리뷰 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_image_review_id"
+          },
+          {
+            "name": "image_url",
+            "comment": "이미지 URL",
+            "dataType": "VARCHAR(500)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 70,
+              "widthDataType": 90,
+              "widthDefault": 60
+            },
+            "id": "review_image_url"
+          },
+          {
+            "name": "display_order",
+            "comment": "표시 순서",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_image_display_order"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 50,
+          "top": 700,
+          "zIndex": 7,
+          "widthName": 90,
+          "widthComment": 70
+        },
+        "visible": true,
+        "id": "table_review_image"
+      },
+      {
+        "name": "REVIEW_LIKE",
+        "comment": "리뷰 좋아요",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "좋아요 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_like_id"
+          },
+          {
+            "name": "review_id",
+            "comment": "리뷰 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_like_review_id"
+          },
+          {
+            "name": "member_id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_like_member_id"
+          },
+          {
+            "name": "created_at",
+            "comment": "좋아요 일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 70,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "review_like_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 300,
+          "top": 900,
+          "zIndex": 8,
+          "widthName": 80,
+          "widthComment": 70
+        },
+        "visible": true,
+        "id": "table_review_like"
+      },
+      {
+        "name": "COMMENT",
+        "comment": "댓글",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "댓글 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "comment_id"
+          },
+          {
+            "name": "member_id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "comment_member_id"
+          },
+          {
+            "name": "review_id",
+            "comment": "리뷰 ID (nullable)",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 100,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "comment_review_id"
+          },
+          {
+            "name": "board_id",
+            "comment": "게시글 ID (nullable)",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 110,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "comment_board_id"
+          },
+          {
+            "name": "content",
+            "comment": "댓글 내용",
+            "dataType": "TEXT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "comment_content"
+          },
+          {
+            "name": "created_at",
+            "comment": "작성일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "comment_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 600,
+          "top": 700,
+          "zIndex": 9,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "table_comment"
+      },
+      {
+        "name": "BOARD",
+        "comment": "게시글",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "게시글 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "board_id"
+          },
+          {
+            "name": "member_id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "board_member_id"
+          },
+          {
+            "name": "title",
+            "comment": "제목",
+            "dataType": "VARCHAR(200)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 90,
+              "widthDefault": 60
+            },
+            "id": "board_title"
+          },
+          {
+            "name": "content",
+            "comment": "내용",
+            "dataType": "TEXT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "board_content"
+          },
+          {
+            "name": "type",
+            "comment": "게시글 유형",
+            "dataType": "VARCHAR(50)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 70,
+              "widthDataType": 70,
+              "widthDefault": 60
+            },
+            "id": "board_type"
+          },
+          {
+            "name": "view_count",
+            "comment": "조회수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "board_view_count"
+          },
+          {
+            "name": "like_count",
+            "comment": "좋아요 수",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "board_like_count"
+          },
+          {
+            "name": "created_at",
+            "comment": "작성일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "board_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 900,
+          "top": 700,
+          "zIndex": 10,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "table_board"
+      },
+      {
+        "name": "STORE_SCRAP",
+        "comment": "가게 스크랩",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "스크랩 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 70,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_scrap_id"
+          },
+          {
+            "name": "store_id",
+            "comment": "가게 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_scrap_store_id"
+          },
+          {
+            "name": "member_id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "store_scrap_member_id"
+          },
+          {
+            "name": "created_at",
+            "comment": "스크랩 일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "store_scrap_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1100,
+          "top": 700,
+          "zIndex": 11,
+          "widthName": 90,
+          "widthComment": 70
+        },
+        "visible": true,
+        "id": "table_store_scrap"
+      },
+      {
+        "name": "MEMBER_FOLLOW",
+        "comment": "회원 팔로우",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "팔로우 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "follow_id"
+          },
+          {
+            "name": "follower_id",
+            "comment": "팔로워 ID (팔로우 하는 사람)",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 150,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "follow_follower_id"
+          },
+          {
+            "name": "following_id",
+            "comment": "팔로잉 ID (팔로우 받는 사람)",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 160,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "follow_following_id"
+          },
+          {
+            "name": "created_at",
+            "comment": "팔로우 일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 80,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "follow_created_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 50,
+          "top": 400,
+          "zIndex": 12,
+          "widthName": 100,
+          "widthComment": 70
+        },
+        "visible": true,
+        "id": "table_member_follow"
+      }
+    ],
+    "indexes": []
+  },
+  "memo": {
+    "memos": []
+  },
+  "relationship": {
+    "relationships": [
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 300,
+          "y": 150,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "table_review",
+          "columnIds": ["review_member_id"],
+          "x": 300,
+          "y": 500,
+          "direction": "left"
+        },
+        "id": "rel_member_review"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_store",
+          "columnIds": ["store_id"],
+          "x": 700,
+          "y": 300,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_review",
+          "columnIds": ["review_store_id"],
+          "x": 500,
+          "y": 400,
+          "direction": "right"
+        },
+        "id": "rel_store_review"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_category",
+          "columnIds": ["category_id"],
+          "x": 1100,
+          "y": 150,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "table_store",
+          "columnIds": ["store_category_id"],
+          "x": 900,
+          "y": 100,
+          "direction": "right"
+        },
+        "id": "rel_category_store"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_region",
+          "columnIds": ["region_id"],
+          "x": 1100,
+          "y": 400,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "table_store",
+          "columnIds": ["store_region_id"],
+          "x": 900,
+          "y": 200,
+          "direction": "right"
+        },
+        "id": "rel_region_store"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_store",
+          "columnIds": ["store_id"],
+          "x": 750,
+          "y": 400,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_store_award",
+          "columnIds": ["award_store_id"],
+          "x": 900,
+          "y": 400,
+          "direction": "top"
+        },
+        "id": "rel_store_award"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_review",
+          "columnIds": ["review_id"],
+          "x": 300,
+          "y": 650,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_review_image",
+          "columnIds": ["review_image_review_id"],
+          "x": 50,
+          "y": 700,
+          "direction": "top"
+        },
+        "id": "rel_review_image"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_review",
+          "columnIds": ["review_id"],
+          "x": 400,
+          "y": 700,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_review_like",
+          "columnIds": ["review_like_review_id"],
+          "x": 300,
+          "y": 900,
+          "direction": "top"
+        },
+        "id": "rel_review_like"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 200,
+          "y": 300,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_review_like",
+          "columnIds": ["review_like_member_id"],
+          "x": 300,
+          "y": 900,
+          "direction": "left"
+        },
+        "id": "rel_member_review_like"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_review",
+          "columnIds": ["review_id"],
+          "x": 500,
+          "y": 600,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "table_comment",
+          "columnIds": ["comment_review_id"],
+          "x": 600,
+          "y": 700,
+          "direction": "left"
+        },
+        "id": "rel_review_comment"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_board",
+          "columnIds": ["board_id"],
+          "x": 900,
+          "y": 750,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "table_comment",
+          "columnIds": ["comment_board_id"],
+          "x": 800,
+          "y": 750,
+          "direction": "right"
+        },
+        "id": "rel_board_comment"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 150,
+          "y": 250,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_comment",
+          "columnIds": ["comment_member_id"],
+          "x": 600,
+          "y": 800,
+          "direction": "left"
+        },
+        "id": "rel_member_comment"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 250,
+          "y": 250,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "table_board",
+          "columnIds": ["board_member_id"],
+          "x": 900,
+          "y": 700,
+          "direction": "left"
+        },
+        "id": "rel_member_board"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_store",
+          "columnIds": ["store_id"],
+          "x": 850,
+          "y": 400,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_store_scrap",
+          "columnIds": ["store_scrap_store_id"],
+          "x": 1100,
+          "y": 700,
+          "direction": "top"
+        },
+        "id": "rel_store_scrap"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 300,
+          "y": 200,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "table_store_scrap",
+          "columnIds": ["store_scrap_member_id"],
+          "x": 1100,
+          "y": 750,
+          "direction": "left"
+        },
+        "id": "rel_member_scrap"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 50,
+          "y": 100,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "table_member_follow",
+          "columnIds": ["follow_follower_id"],
+          "x": 50,
+          "y": 400,
+          "direction": "top"
+        },
+        "id": "rel_member_follower"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 100,
+          "y": 120,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "table_member_follow",
+          "columnIds": ["follow_following_id"],
+          "x": 100,
+          "y": 400,
+          "direction": "top"
+        },
+        "id": "rel_member_following"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_category",
+          "columnIds": ["category_id"],
+          "x": 1100,
+          "y": 100,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "table_category",
+          "columnIds": ["category_parent_id"],
+          "x": 1150,
+          "y": 50,
+          "direction": "right"
+        },
+        "id": "rel_category_self"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_region",
+          "columnIds": ["region_id"],
+          "x": 1100,
+          "y": 350,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "table_region",
+          "columnIds": ["region_parent_id"],
+          "x": 1150,
+          "y": 300,
+          "direction": "right"
+        },
+        "id": "rel_region_self"
+      }
+    ]
+  }
+}
