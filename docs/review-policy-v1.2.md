@@ -457,55 +457,6 @@ B: (3.8×0.4) + (4.8×0.3) + (3.5×0.15) + (4.0×0.15) = 1.52 + 1.44 + 0.525 + 0
 
 ---
 
-## 부록 B: 시스템 구현 참고사항
-
-### B.1 데이터베이스 스키마 권장사항
-
-```sql
--- 리뷰 테이블
-CREATE TABLE reviews (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    restaurant_id BIGINT NOT NULL,
-    rating_overall DECIMAL(2,1),     -- 종합 점수
-    rating_taste DECIMAL(2,1),       -- 맛
-    rating_value DECIMAL(2,1),       -- 가성비
-    rating_ambiance DECIMAL(2,1),    -- 분위기
-    rating_service DECIMAL(2,1),     -- 접객
-    text_content TEXT,
-    created_at TIMESTAMP,
-    user_tier ENUM('bronze', 'silver', 'gold', 'black'),
-    weight DECIMAL(2,1),              -- 리뷰 작성 시점 가중치
-    time_decay_factor DECIMAL(3,2),   -- 시간 감가상각 계수 (캐시)
-    is_verified BOOLEAN,              -- 운영자 검수 통과 여부(정상 리뷰)
-    INDEX idx_restaurant_created (restaurant_id, created_at)
-);
-
--- 사용자 신뢰도 테이블
-CREATE TABLE user_reputation (
-    user_id BIGINT PRIMARY KEY,
-    tier ENUM('bronze', 'silver', 'gold', 'black'),
-    review_count INT,
-    helpful_count INT,                -- '도움됨' 획득 수
-    report_count INT,                 -- 신고 받은 횟수
-    last_violation_at TIMESTAMP,
-    suspension_until TIMESTAMP
-);
-```
-
-### B.2 배치 작업 (Daily Cron Jobs)
-
-1. **시간 감가상각 갱신** (매일 00:00)
-   - 모든 리뷰의 `time_decay_factor` 재계산
-
-2. **어뷰징 패턴 탐지** (매일 02:00)
-   - 최근 24시간 리뷰 중 의심 계정 추출
-
-3. **레벨 자동 승급** (매일 04:00)
-   - Silver/Gold 요건 충족 유저 자동 승급
-
----
-
 ## 변경 이력
 
 | 버전 | 날짜 | 변경 내용 | 작성자 |
