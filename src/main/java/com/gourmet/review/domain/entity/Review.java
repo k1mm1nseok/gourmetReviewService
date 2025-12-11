@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -60,15 +61,17 @@ public class Review {
 
     /**
      * 분위기 점수 (0.00 ~ 5.00)
+     * Ambiance로 용어 통일 (DDL 컬럼: score_mood)
      */
     @Column(name = "score_mood", nullable = false, precision = 3, scale = 2)
-    private BigDecimal scoreMood;
+    private BigDecimal scoreAmbiance;
 
     /**
-     * 가격 점수 (0.00 ~ 5.00)
+     * 가성비 점수 (0.00 ~ 5.00)
+     * Value로 의미 명확화 (DDL 컬럼: score_price)
      */
     @Column(name = "score_price", nullable = false, precision = 3, scale = 2)
-    private BigDecimal scorePrice;
+    private BigDecimal scoreValue;
 
     /**
      * 계산된 종합 점수 (가중합)
@@ -135,21 +138,21 @@ public class Review {
 
     /**
      * 종합 점수 계산
-     * 맛:50%, 서비스:20%, 분위기:15%, 가격:15%
+     * 정책 문서 v1.3.2 기준: 맛 40%, 가성비(Value) 30%, 분위기(Ambiance) 15%, 서비스 15%
      */
     @PrePersist
     @PreUpdate
     public void calculateScore() {
-        BigDecimal tasteWeight = new BigDecimal("0.50");
-        BigDecimal serviceWeight = new BigDecimal("0.20");
-        BigDecimal moodWeight = new BigDecimal("0.15");
-        BigDecimal priceWeight = new BigDecimal("0.15");
+        BigDecimal tasteWeight = new BigDecimal("0.40");      // 40%
+        BigDecimal valueWeight = new BigDecimal("0.30");      // 30% (가성비)
+        BigDecimal ambianceWeight = new BigDecimal("0.15");   // 15% (분위기)
+        BigDecimal serviceWeight = new BigDecimal("0.15");    // 15%
 
         this.scoreCalculated = scoreTaste.multiply(tasteWeight)
+                .add(scoreValue.multiply(valueWeight))
+                .add(scoreAmbiance.multiply(ambianceWeight))
                 .add(scoreService.multiply(serviceWeight))
-                .add(scoreMood.multiply(moodWeight))
-                .add(scorePrice.multiply(priceWeight))
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -211,23 +214,23 @@ public class Review {
     }
 
     /**
-     * 리뷰 내용 수정
+     * 리뷰 내용 및 점수 수정
      * @param content 새로운 내용
      * @param scoreTaste 맛 점수
+     * @param scoreValue 가성비 점수
+     * @param scoreAmbiance 분위기 점수
      * @param scoreService 서비스 점수
-     * @param scoreMood 분위기 점수
-     * @param scorePrice 가격 점수
      * @param isRevisit 재방문 여부
      */
-    public void updateContent(String content, BigDecimal scoreTaste, BigDecimal scoreService,
-                             BigDecimal scoreMood, BigDecimal scorePrice, Boolean isRevisit) {
+    public void updateContent(String content, BigDecimal scoreTaste, BigDecimal scoreValue,
+                             BigDecimal scoreAmbiance, BigDecimal scoreService, Boolean isRevisit) {
         this.content = content;
         this.scoreTaste = scoreTaste;
+        this.scoreValue = scoreValue;
+        this.scoreAmbiance = scoreAmbiance;
         this.scoreService = scoreService;
-        this.scoreMood = scoreMood;
-        this.scorePrice = scorePrice;
         this.isRevisit = isRevisit;
-        // calculateScore는 @PreUpdate에서 자동 호출됨
+        // 종합 점수 재계산은 @PreUpdate에서 자동 호출
     }
 
     /**
