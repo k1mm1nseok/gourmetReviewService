@@ -20,225 +20,170 @@
 @REM ----------------------------------------------------------------------------
 @REM Apache Maven Wrapper startup batch script, version 3.3.2
 @REM
+@REM Required ENV vars:
+@REM JAVA_HOME - location of a JDK home dir
+@REM
 @REM Optional ENV vars
-@REM   JAVA_HOME - location of a JDK home dir, required when download maven via java source
-@REM   MVNW_REPOURL - repo url base for downloading maven distribution
-@REM   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven
-@REM   MVNW_VERBOSE - true: enable verbose log; others: silence the output
+@REM MAVEN_BATCH_ECHO - set to 'on' to enable the echoing of the batch commands
+@REM MAVEN_BATCH_PAUSE - set to 'on' to wait for a keystroke before ending
+@REM MAVEN_OPTS - parameters passed to the Java VM when running Maven
+@REM     e.g. to debug Maven itself, use
+@REM set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+@REM MAVEN_SKIP_RC - flag to disable loading of mavenrc files
 @REM ----------------------------------------------------------------------------
 
-@IF "%__MVNW_ARG0_NAME__%"=="" (SET __MVNW_ARG0_NAME__=%~nx0)
-@SET __MVNW_CMD__=
-@SET __MVNW_ERROR__=
-@SET __MVNW_PSMODULEP_SAVE=%PSModulePath%
-@SET PSModulePath=
-@FOR /F "usebackq tokens=1* delims==" %%A IN (`powershell -noprofile "& {$scriptDir='%~dp0'; $script='%__MVNW_ARG0_NAME__%'; icm -ScriptBlock ([Scriptblock]::Create((Get-Content -Raw '%~f0'))) -NoNewScope}"`) DO @(
-  IF "%%A"=="__MVNW_CMD__" (set __MVNW_CMD__=%%B)
-  IF "%%A"=="__MVNW_ERROR__" (set __MVNW_ERROR__=%%B)
-  IF "%%A"=="__MVNW_PSMODULEP_SAVE" (set PSModulePath=%%B)
+@REM Begin all REM lines with '@' in case MAVEN_BATCH_ECHO is 'on'
+@echo off
+@REM set title of command window
+title %0
+@REM enable echoing by setting MAVEN_BATCH_ECHO to 'on'
+@if "%MAVEN_BATCH_ECHO%" == "on"  echo %MAVEN_BATCH_ECHO%
+
+@REM set %HOME% to equivalent of $HOME
+if "%HOME%" == "" (set "HOME=%HOMEDRIVE%%HOMEPATH%")
+
+@REM Execute a user defined script before this one
+if not "%MAVEN_SKIP_RC%" == "" goto skipRcPre
+@REM check for pre script, once with legacy .bat ending and once with .cmd ending
+if exist "%USERPROFILE%\mavenrc_pre.bat" call "%USERPROFILE%\mavenrc_pre.bat" %*
+if exist "%USERPROFILE%\mavenrc_pre.cmd" call "%USERPROFILE%\mavenrc_pre.cmd" %*
+:skipRcPre
+
+@setlocal
+
+set ERROR_CODE=0
+
+@REM To isolate internal variables from possible post scripts, we use another setlocal
+@setlocal
+
+@REM ==== START VALIDATION ====
+if not "%JAVA_HOME%" == "" goto OkJHome
+
+echo.
+echo Error: JAVA_HOME not found in your environment. >&2
+echo Please set the JAVA_HOME variable in your environment to match the >&2
+echo location of your Java installation. >&2
+echo.
+goto error
+
+:OkJHome
+if exist "%JAVA_HOME%\bin\java.exe" goto init
+
+echo.
+echo Error: JAVA_HOME is set to an invalid directory. >&2
+echo JAVA_HOME = "%JAVA_HOME%" >&2
+echo Please set the JAVA_HOME variable in your environment to match the >&2
+echo location of your Java installation. >&2
+echo.
+goto error
+
+@REM ==== END VALIDATION ====
+
+:init
+
+@REM Find the project base dir, i.e. the directory that contains the folder ".mvn".
+@REM Fallback to current working directory if not found.
+
+set MAVEN_PROJECTBASEDIR=%MAVEN_BASEDIR%
+IF NOT "%MAVEN_PROJECTBASEDIR%"=="" goto endDetectBaseDir
+
+set EXEC_DIR=%CD%
+set WDIR=%EXEC_DIR%
+:findBaseDir
+IF EXIST "%WDIR%"\.mvn goto baseDirFound
+cd ..
+IF "%WDIR%"=="%CD%" goto baseDirNotFound
+set WDIR=%CD%
+goto findBaseDir
+
+:baseDirFound
+set MAVEN_PROJECTBASEDIR=%WDIR%
+cd "%EXEC_DIR%"
+goto endDetectBaseDir
+
+:baseDirNotFound
+set MAVEN_PROJECTBASEDIR=%EXEC_DIR%
+cd "%EXEC_DIR%"
+
+:endDetectBaseDir
+
+IF NOT EXIST "%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.jar" goto downloadWrapper
+
+@REM Use the maven-wrapper.jar if it exists
+set WRAPPER_JAR="%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.jar"
+set WRAPPER_LAUNCHER=org.apache.maven.wrapper.MavenWrapperMain
+
+set WRAPPER_URL="https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar"
+
+goto runWrapper
+
+:downloadWrapper
+@REM Download the maven-wrapper.jar if it doesn't exist
+if not exist "%MAVEN_PROJECTBASEDIR%\.mvn\wrapper" mkdir "%MAVEN_PROJECTBASEDIR%\.mvn\wrapper"
+
+if "%MVNW_VERBOSE%" == "true" (
+    echo Downloading maven-wrapper from %WRAPPER_URL%
 )
-@SET PSModulePath=%__MVNW_PSMODULEP_SAVE%
-@SET __MVNW_PSMODULEP_SAVE=
-@SET __MVNW_ARG0_NAME__=
-@SET MVNW_USERNAME=
-@SET MVNW_PASSWORD=
-@IF "%__MVNW_ERROR__%"=="1" @(
-  @SET __MVNW_ERROR__=
-  @ECHO ERROR: __MVNW_CMD__ is not set >&2
-  @EXIT /B 1
+
+powershell -Command "&{"^
+    "$webclient = new-object System.Net.WebClient;"^
+    "if (-not ([string]::IsNullOrEmpty('%MVNW_USERNAME%') -and [string]::IsNullOrEmpty('%MVNW_PASSWORD%'))) {"^
+    "$webclient.Credentials = new-object System.Net.NetworkCredential('%MVNW_USERNAME%', '%MVNW_PASSWORD%');"^
+    "}"^
+    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $webclient.DownloadFile('%WRAPPER_URL%', '%WRAPPER_JAR%')"^
+    "}"
+if "%MVNW_VERBOSE%" == "true" (
+    echo Finished downloading %WRAPPER_JAR%
 )
-@IF NOT "%__MVNW_CMD__%"=="" @(
-  @SET __MVNW_CMD__=
-  @GOTO :__mvnw_cmd__
+
+:runWrapper
+@REM If specified, validate the SHA-256 sum of the Maven wrapper jar file
+SET WRAPPER_SHA_256_SUM=""
+FOR /F "usebackq tokens=1,2 delims==" %%A IN ("%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.properties") DO (
+    IF "%%A"=="wrapperSha256Sum" SET WRAPPER_SHA_256_SUM=%%B
 )
-@ECHO ERROR: __MVNW_CMD__ is not set >&2
-@EXIT /B 1
-:__mvnw_cmd__
-%__MVNW_CMD__% %*
-@IF ERRORLEVEL 1 @GOTO error
-@GOTO end
+IF NOT %WRAPPER_SHA_256_SUM%=="" (
+    powershell -Command "&{"^
+       "$hash = (Get-FileHash \"%WRAPPER_JAR%\" -Algorithm SHA256).Hash.ToLower();"^
+       "If('%WRAPPER_SHA_256_SUM%' -ne $hash){"^
+       "  Write-Output 'Error: Failed to validate Maven wrapper SHA-256, your Maven wrapper might be compromised.';"^
+       "  Write-Output 'Investigate or delete %WRAPPER_JAR% to attempt a clean download.';"^
+       "  Write-Output 'If you updated your Maven version, you need to update the specified wrapperSha256Sum property.';"^
+       "  exit 1;"^
+       "}"^
+       "}"
+    if ERRORLEVEL 1 goto error
+)
+
+@REM Provide a "standardized" way to retrieve the CLI args that will
+@REM work with both Windows and non-Windows executions.
+set MAVEN_CMD_LINE_ARGS=%*
+
+%JAVA_HOME%\bin\java.exe ^
+  %JVM_CONFIG_MAVEN_PROPS% ^
+  %MAVEN_OPTS% ^
+  %MAVEN_DEBUG_OPTS% ^
+  -classpath %WRAPPER_JAR% ^
+  "-Dmaven.multiModuleProjectDirectory=%MAVEN_PROJECTBASEDIR%" ^
+  %WRAPPER_LAUNCHER% %MAVEN_CONFIG% %*
+if ERRORLEVEL 1 goto error
+goto end
+
 :error
-@SET ERROR_CODE=1
+set ERROR_CODE=1
+
 :end
-@ENDLOCAL & SET ERROR_CODE=%ERROR_CODE%
-@IF NOT "%MVNW_LEAVE_RUNNING%"=="true" @PAUSE
-@IF "%ERROR_CODE%"=="0" @EXIT /B 0
-@EXIT /B %ERROR_CODE%
-:__mvnw_psmodulep_init__
-@IF NOT "%MVNW_VERBOSE%"=="" @echo MVNW_VERBOSE: "%MVNW_VERBOSE%"
-@SET __MVNW_PSMODULEP_SAVE=PSModulePath=%PSModulePath%
-@SET PSModulePath=
-@IF NOT "%MVNW_PSMODULEP_SAVE%"=="" @echo __MVNW_PSMODULEP_SAVE=%__MVNW_PSMODULEP_SAVE%
-@GOTO :EOF
-@REM -------------------------- PowerShell Script --------------------------
-__MVNW_VERSION__="3.3.2"
+@endlocal & set ERROR_CODE=%ERROR_CODE%
 
-# This script must be able to run with PowerShell version 2.0. We cannot use $PSVersionTable.PSVersion because it was introduced in PS 3.0.
-# We use [Environment]::Version to get the .NET version, then use reflection to call an internal method to get the PowerShell version.
-# PS 2.0 is supported on .NET 2.0 - .NET 3.5
-$ps_version = 2
+if not "%MAVEN_SKIP_RC%"=="" goto skipRcPost
+@REM check for post script, once with legacy .bat ending and once with .cmd ending
+if exist "%USERPROFILE%\mavenrc_post.bat" call "%USERPROFILE%\mavenrc_post.bat"
+if exist "%USERPROFILE%\mavenrc_post.cmd" call "%USERPROFILE%\mavenrc_post.cmd"
+:skipRcPost
 
-if ($PSVersionTable -and $PSVersionTable.PSVersion) {
-    $ps_version = $PSVersionTable.PSVersion.Major
-}
+@REM pause the script if MAVEN_BATCH_PAUSE is set to 'on'
+if "%MAVEN_BATCH_PAUSE%"=="on" pause
 
-if ($ps_version -ge 3) {
-    $verbose = $env:MVNW_VERBOSE -eq "true"
-} else {
-    $verbose = $false
-}
+if "%MAVEN_TERMINATE_CMD%"=="on" exit %ERROR_CODE%
 
-function Write-Verbose-Message {
-    param ([string]$message)
-    if ($verbose) {
-        Write-Output $message
-    }
-}
-
-# workaround for PS2.0: powershell does not have Test-Path -PathType Leaf
-function Test-FileExists {
-    param ([string]$file)
-    if (Test-Path $file) {
-        return !(Get-Item $file).PSIsContainer
-    }
-    return $false
-}
-
-$basedir = Split-Path -Path $scriptDir -Parent
-Write-Verbose-Message "basedir=$basedir"
-
-$MAVEN_PROJECTBASEDIR = $env:MAVEN_BASEDIR
-if (-not $MAVEN_PROJECTBASEDIR) {
-    $MAVEN_PROJECTBASEDIR = $basedir
-}
-Write-Verbose-Message "MAVEN_PROJECTBASEDIR=$MAVEN_PROJECTBASEDIR"
-
-$wrapperJarPath = "$scriptDir\.mvn\wrapper\maven-wrapper.jar"
-$wrapperPropertiesPath = "$scriptDir\.mvn\wrapper\maven-wrapper.properties"
-
-function Get-Property {
-    param ([string]$key, [string]$file)
-    $value = $null
-    Get-Content $file | ForEach-Object {
-        if ($_ -match "^$key\s*=\s*(.*)$") {
-            $value = $matches[1].Trim()
-        }
-    }
-    return $value
-}
-
-if (Test-FileExists $wrapperPropertiesPath) {
-    $distributionUrl = Get-Property -key "distributionUrl" -file $wrapperPropertiesPath
-    $distributionSha256Sum = Get-Property -key "distributionSha256Sum" -file $wrapperPropertiesPath
-    $wrapperUrl = Get-Property -key "wrapperUrl" -file $wrapperPropertiesPath
-} else {
-    Write-Output "ERROR: Maven wrapper properties file not found: $wrapperPropertiesPath"
-    "__MVNW_ERROR__=1"
-    exit 1
-}
-
-if (-not $distributionUrl) {
-    Write-Output "ERROR: distributionUrl is not set in $wrapperPropertiesPath"
-    "__MVNW_ERROR__=1"
-    exit 1
-}
-
-# Determine Maven home directory based on distribution URL
-function Get-HashCode {
-    param ([string]$str)
-    $h = 0
-    $str.ToCharArray() | ForEach-Object {
-        $h = (($h * 31) + [int]$_) % 4294967296
-    }
-    return "{0:x}" -f $h
-}
-
-$distributionUrlName = [System.IO.Path]::GetFileName($distributionUrl)
-$distributionUrlNameMain = [System.IO.Path]::GetFileNameWithoutExtension($distributionUrlName)
-if ($distributionUrlNameMain -match "-bin$") {
-    $distributionUrlNameMain = $distributionUrlNameMain -replace "-bin$", ""
-}
-
-$MAVEN_USER_HOME = if ($env:MAVEN_USER_HOME) { $env:MAVEN_USER_HOME } else { "$env:USERPROFILE\.m2" }
-$MAVEN_HOME = "$MAVEN_USER_HOME\wrapper\dists\$distributionUrlNameMain\$(Get-HashCode $distributionUrl)"
-Write-Verbose-Message "MAVEN_HOME=$MAVEN_HOME"
-
-# Check if Maven is already installed
-if (Test-Path "$MAVEN_HOME\bin\mvn.cmd") {
-    Write-Verbose-Message "Found Maven in MAVEN_HOME"
-    "__MVNW_CMD__=""$MAVEN_HOME\bin\mvn.cmd"" %*"
-    exit 0
-}
-
-# Download and install Maven
-Write-Verbose-Message "Couldn't find Maven home, downloading and installing it..."
-Write-Verbose-Message "Downloading from: $distributionUrl"
-
-$TMP_DOWNLOAD_DIR = New-Item -ItemType Directory -Path "$env:TEMP\mvnw-$(New-Guid)"
-$distributionFile = "$TMP_DOWNLOAD_DIR\$distributionUrlName"
-
-try {
-    Write-Verbose-Message "Downloading to: $distributionFile"
-
-    # Download using .NET WebClient
-    $webclient = New-Object System.Net.WebClient
-    if ($env:MVNW_USERNAME -and $env:MVNW_PASSWORD) {
-        $webclient.Credentials = New-Object System.Net.NetworkCredential($env:MVNW_USERNAME, $env:MVNW_PASSWORD)
-    }
-    if ($env:MVNW_REPOURL) {
-        $distributionUrl = "$env:MVNW_REPOURL/org/apache/maven/$($distributionUrl.Substring($distributionUrl.LastIndexOf('/org/apache/maven/') + 1))"
-        Write-Verbose-Message "Using MVNW_REPOURL: $distributionUrl"
-    }
-    $webclient.DownloadFile($distributionUrl, $distributionFile)
-
-    # Validate SHA-256 if specified
-    if ($distributionSha256Sum) {
-        Write-Verbose-Message "Validating SHA-256 checksum"
-        $stream = [System.IO.File]::OpenRead($distributionFile)
-        $sha256 = [System.Security.Cryptography.SHA256]::Create()
-        $hash = $sha256.ComputeHash($stream)
-        $stream.Close()
-        $hashString = [System.BitConverter]::ToString($hash).Replace("-", "").ToLower()
-
-        if ($hashString -ne $distributionSha256Sum) {
-            Write-Output "ERROR: Failed to validate Maven distribution SHA-256, your Maven distribution might be compromised."
-            Write-Output "If you updated your Maven version, you need to update the specified distributionSha256Sum property."
-            Remove-Item -Recurse -Force $TMP_DOWNLOAD_DIR
-            "__MVNW_ERROR__=1"
-            exit 1
-        }
-    }
-
-    # Extract the distribution
-    Write-Verbose-Message "Extracting Maven distribution to $TMP_DOWNLOAD_DIR"
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($distributionFile, $TMP_DOWNLOAD_DIR)
-
-    # Move to final location
-    $extractedDir = Get-ChildItem -Path $TMP_DOWNLOAD_DIR -Directory | Where-Object { $_.Name -match "^apache-maven-" -or $_.Name -match "^maven-mvnd-" } | Select-Object -First 1
-    if ($extractedDir) {
-        Write-Verbose-Message "Moving Maven to $MAVEN_HOME"
-        New-Item -ItemType Directory -Path (Split-Path $MAVEN_HOME -Parent) -Force | Out-Null
-        Move-Item -Path $extractedDir.FullName -Destination $MAVEN_HOME -Force
-        "$distributionUrl" | Out-File -FilePath "$MAVEN_HOME\mvnw.url" -Encoding ASCII
-    } else {
-        Write-Output "ERROR: Could not find extracted Maven directory"
-        Remove-Item -Recurse -Force $TMP_DOWNLOAD_DIR
-        "__MVNW_ERROR__=1"
-        exit 1
-    }
-
-    Remove-Item -Recurse -Force $TMP_DOWNLOAD_DIR
-    Write-Verbose-Message "Maven installed successfully"
-    "__MVNW_CMD__=""$MAVEN_HOME\bin\mvn.cmd"" %*"
-    exit 0
-
-} catch {
-    Write-Output "ERROR: Failed to download or install Maven"
-    Write-Output $_.Exception.Message
-    if (Test-Path $TMP_DOWNLOAD_DIR) {
-        Remove-Item -Recurse -Force $TMP_DOWNLOAD_DIR
-    }
-    "__MVNW_ERROR__=1"
-    exit 1
-}
+cmd /C exit /B %ERROR_CODE%
