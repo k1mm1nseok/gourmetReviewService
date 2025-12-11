@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MemberTier {
     BRONZE("브론즈", 0, 0),
-    SILVER("실버", 10, 30),
+    SILVER("실버", 5, 0),        // 리뷰 5개 (검수 통과는 별도 검증 필요)
     GOLD("골드", 30, 100),
-    GOURMET("고메", 100, 500),
-    BLACK("블랙", 0, 0); // 관리자 지정 등급
+    GOURMET("구르메", 100, 500),  // 운영진 승인은 Member 엔티티의 별도 플래그(isGourmetApproved)로 처리
+    BLACK("블랙", 0, 0);          // 관리자 지정 등급
 
     private final String description;
     private final int requiredReviewCount;

@@ -46,6 +46,20 @@ public class Comment extends BaseEntity {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    // ===== Validation =====
+
+    /**
+     * review 또는 board 중 하나만 설정되었는지 검증
+     * DDL의 chk_comment_target CHECK 제약조건과 일치
+     */
+    @PrePersist
+    @PreUpdate
+    private void validateTarget() {
+        if ((review != null && board != null) || (review == null && board == null)) {
+            throw new IllegalStateException("Comment must have exactly one target (review or board)");
+        }
+    }
+
     // ===== 비즈니스 로직 메서드 =====
 
     /**

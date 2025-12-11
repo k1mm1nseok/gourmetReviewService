@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "password")
 public class Member extends BaseEntity {
 
     @Id
@@ -33,6 +34,14 @@ public class Member extends BaseEntity {
 
     @Column(name = "nickname", nullable = false, unique = true, length = 50)
     private String nickname;
+
+    /**
+     * 비밀번호
+     * BCrypt 기반 암호화 사용 권장 (Spring Security BCryptPasswordEncoder)
+     * 평문 저장 금지
+     */
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
