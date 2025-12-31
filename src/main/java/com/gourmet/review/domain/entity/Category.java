@@ -3,6 +3,9 @@ package com.gourmet.review.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 카테고리 엔티티 (계층 구조)
  * 예: 한식 > 찌개/탕 > 김치찌개
@@ -32,6 +35,9 @@ public class Category {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> children = new ArrayList<>();
 
     /**
      * 계층 깊이

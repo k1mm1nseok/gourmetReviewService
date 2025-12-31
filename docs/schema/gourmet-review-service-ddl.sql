@@ -8,6 +8,7 @@ CREATE TABLE `member` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
   `email` VARCHAR(100) NOT NULL COMMENT '이메일',
   `nickname` VARCHAR(50) NOT NULL COMMENT '닉네임',
+  `password` VARCHAR(255) NOT NULL COMMENT '비밀번호 (BCrypt 암호화)',
   `role` VARCHAR(20) NOT NULL DEFAULT 'USER' COMMENT '권한 (USER, ADMIN)',
   `tier` VARCHAR(20) NOT NULL DEFAULT 'BRONZE' COMMENT '회원 등급 (BRONZE, SILVER, GOLD, GOURMET, BLACK)',
   `helpful_count` INT NOT NULL DEFAULT 0 COMMENT '누적 도움됨 수',
@@ -15,13 +16,15 @@ CREATE TABLE `member` (
   `violation_count` INT NOT NULL DEFAULT 0 COMMENT '누적 위반 횟수',
   `last_review_at` DATETIME NULL COMMENT '마지막 리뷰 작성일시',
   `is_deviation_target` BOOLEAN NOT NULL DEFAULT FALSE COMMENT '편차 보정 대상 여부',
+  `is_phone_verified` BOOLEAN NOT NULL DEFAULT FALSE COMMENT '휴대폰 인증 여부 (리뷰 작성 권한)',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '가입일시',
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_member_email` (`email`),
   UNIQUE KEY `uk_member_nickname` (`nickname`),
   KEY `idx_member_tier` (`tier`),
-  KEY `idx_member_last_review_at` (`last_review_at`)
+  KEY `idx_member_last_review_at` (`last_review_at`),
+  KEY `idx_member_phone_verified` (`is_phone_verified`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원';
 
 -- 2. CATEGORY (카테고리)
@@ -85,16 +88,18 @@ CREATE TABLE `review` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '리뷰 ID',
   `store_id` BIGINT NOT NULL COMMENT '가게 ID',
   `member_id` BIGINT NOT NULL COMMENT '회원 ID',
+  `title` TEXT NULL COMMENT '제목',
   `content` TEXT NOT NULL COMMENT '리뷰 내용',
+  `party_size` INT NOT NULL COMMENT '방문 인원 수',
   `score_taste` DECIMAL(3,2) NOT NULL COMMENT '맛 점수',
   `score_service` DECIMAL(3,2) NOT NULL COMMENT '서비스 점수',
   `score_mood` DECIMAL(3,2) NOT NULL COMMENT '분위기 점수',
   `score_price` DECIMAL(3,2) NOT NULL COMMENT '가격 점수',
   `score_calculated` DECIMAL(3,2) NOT NULL COMMENT '계산된 종합 점수 (가중합)',
   `status` VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT '리뷰 상태 (PENDING, APPROVED, REJECTED, BLIND_HELD, PUBLIC, SUSPENDED)',
-  `is_revisit` BOOLEAN NOT NULL DEFAULT FALSE COMMENT '재방문 여부',
   `visit_date` DATE NOT NULL COMMENT '방문일',
-  `like_count` INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
+  `visit_count` INT NOT NULL DEFAULT 0 COMMENT '해당 가게 방문 횟수 (PUBLIC 기준)',
+  `helpful_count` INT NOT NULL DEFAULT 0 COMMENT '도움이 됨 수',
   `admin_comment` TEXT NULL COMMENT '관리자 코멘트 (반려 사유 등)',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '작성일시 (시간 감가상각 기준)',
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
@@ -107,6 +112,22 @@ CREATE TABLE `review` (
   CONSTRAINT `fk_review_store` FOREIGN KEY (`store_id`) REFERENCES `store` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_review_member` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='리뷰';
+
+-- 5-1. MEMBER_STORE_VISIT (회원-가게 방문 횟수)
+CREATE TABLE `member_store_visit` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '방문 ID',
+  `member_id` BIGINT NOT NULL COMMENT '회원 ID',
+  `store_id` BIGINT NOT NULL COMMENT '가게 ID',
+  `visit_count` INT NOT NULL DEFAULT 0 COMMENT '누적 방문 횟수 (PUBLIC 기준)',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_member_store_visit` (`member_id`, `store_id`),
+  KEY `idx_member_store_visit_member` (`member_id`),
+  KEY `idx_member_store_visit_store` (`store_id`),
+  CONSTRAINT `fk_member_store_visit_member` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_member_store_visit_store` FOREIGN KEY (`store_id`) REFERENCES `store` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원-가게별 누적 방문 횟수';
 
 -- 6. STORE_AWARD (가게 수상 이력)
 CREATE TABLE `store_award` (
@@ -135,20 +156,20 @@ CREATE TABLE `review_image` (
   CONSTRAINT `fk_review_image_review` FOREIGN KEY (`review_id`) REFERENCES `review` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='리뷰 이미지';
 
--- 8. REVIEW_LIKE (리뷰 좋아요)
-CREATE TABLE `review_like` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '좋아요 ID',
+-- 8. REVIEW_HELPFUL (리뷰 도움됨)
+CREATE TABLE `review_helpful` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '도움됨 ID',
   `review_id` BIGINT NOT NULL COMMENT '리뷰 ID',
   `member_id` BIGINT NOT NULL COMMENT '회원 ID',
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '좋아요 일시',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '도움됨 일시',
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_review_like` (`review_id`, `member_id`),
-  KEY `idx_review_like_review` (`review_id`),
-  KEY `idx_review_like_member` (`member_id`),
-  CONSTRAINT `fk_review_like_review` FOREIGN KEY (`review_id`) REFERENCES `review` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_review_like_member` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='리뷰 좋아요';
+  UNIQUE KEY `uk_review_helpful` (`review_id`, `member_id`),
+  KEY `idx_review_helpful_review` (`review_id`),
+  KEY `idx_review_helpful_member` (`member_id`),
+  CONSTRAINT `fk_review_helpful_review` FOREIGN KEY (`review_id`) REFERENCES `review` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_review_helpful_member` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='리뷰 도움됨';
 
 -- 9. BOARD (게시글)
 CREATE TABLE `board` (

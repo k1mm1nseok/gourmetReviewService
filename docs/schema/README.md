@@ -1,5 +1,8 @@
 # ERD 설계 문서
 
+**문서 최신화:** 2025-12-31
+**정책 기준:** review-policy v1.3.3
+
 ## 📁 파일 목록
 
 ### 1. `gourmet-review-service-ddl.sql` ⭐ **ERDCloud용**
@@ -32,7 +35,7 @@ https://www.erdcloud.com/ 접속
 4. **"Import"** 버튼 클릭
 
 ### Step 4: 자동 ERD 생성 완료! 🎉
-- 12개 테이블이 자동으로 배치됨
+- 13개 테이블이 자동으로 배치됨
 - 관계선(FK)도 자동으로 그려짐
 - 테이블 위치는 드래그로 조정 가능
 
@@ -64,14 +67,15 @@ vuerd
 - **CATEGORY**: 카테고리 (한식 > 찌개/탕 > 김치찌개)
 - **REGION**: 지역 (서울 > 강남구 > 역삼동)
 
-### 관계 엔티티 (7개)
+### 관계 엔티티 (8개)
 - STORE_AWARD (가게 수상 이력)
 - REVIEW_IMAGE (리뷰 이미지)
-- REVIEW_LIKE (리뷰 좋아요)
+- REVIEW_HELPFUL (리뷰 도움됨)
 - COMMENT (댓글)
 - BOARD (게시글)
 - STORE_SCRAP (가게 스크랩)
 - MEMBER_FOLLOW (회원 팔로우)
+- MEMBER_STORE_VISIT (회원-가게 방문 횟수)
 
 ---
 
@@ -108,16 +112,18 @@ PENDING → APPROVED → PUBLIC
 
 ```
 MEMBER (1) ----< (N) REVIEW
-MEMBER (1) ----< (N) REVIEW_LIKE
+MEMBER (1) ----< (N) REVIEW_HELPFUL
 MEMBER (1) ----< (N) STORE_SCRAP
 MEMBER (1) ----< (N) MEMBER_FOLLOW
+MEMBER (1) ----< (N) MEMBER_STORE_VISIT
 
 STORE (1) ----< (N) REVIEW
 STORE (N) >---- (1) CATEGORY
 STORE (N) >---- (1) REGION
+STORE (1) ----< (N) MEMBER_STORE_VISIT
 
 REVIEW (1) ----< (N) REVIEW_IMAGE
-REVIEW (1) ----< (N) REVIEW_LIKE
+REVIEW (1) ----< (N) REVIEW_HELPFUL
 REVIEW (1) ----< (N) COMMENT
 
 CATEGORY (자기참조: parent_id)

@@ -1,0 +1,15 @@
+HTTP/1.1 401 
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+WWW-Authenticate: Basic realm="Realm"
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Set-Cookie: JSESSIONID=81DB6339E51653744E7B72A70A4DE0EB; Path=/; HttpOnly
+Content-Length: 0
+Date: Fri, 12 Dec 2025 08:14:56 GMT
+

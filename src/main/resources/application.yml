@@ -17,13 +17,12 @@ spring:
 
   # JPA 설정
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate  # 운영: validate, 개발: update, 테스트: create-drop
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-    show-sql: true  # 운영 환경에서는 false로 변경
+    show-sql: true  # 운영 환경은 prod 프로파일에서 false로 override
     properties:
       hibernate:
         format_sql: true
@@ -44,11 +43,8 @@ spring:
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
       org.springframework.security: DEBUG
 
-  # Security 기본 설정 (추후 커스터마이징 필요)
-  security:
-    user:
-      name: admin
-      password: admin123
+  # Security 기본 설정
+  # dev 스모크 테스트용 Basic Auth 계정은 SecurityConfig에서 인메모리로 등록한다.
 
 # 서버 설정
 server:
@@ -75,7 +71,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
 
   logging:
     level:
@@ -105,6 +100,10 @@ spring:
   config:
     activate:
       on-profile: test
+
+  task:
+    scheduling:
+      enabled: false
 
   datasource:
     url: jdbc:h2:mem:testdb

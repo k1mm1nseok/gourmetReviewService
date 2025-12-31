@@ -2,7 +2,7 @@
 
 ## 개요
 한국형 미식 검증 플랫폼의 최종 데이터베이스 스키마 정의
-- 기능 명세서 v1.3.2 반영
+- 기능/정책 문서 v1.3.3 반영
 - Spring Boot JPA/Hibernate 기반 설계
 
 ---
@@ -68,16 +68,18 @@
 | id | BIGINT | PK, AUTO_INCREMENT | 리뷰 ID |
 | store_id | BIGINT | FK(STORE), NOT NULL | 가게 ID |
 | member_id | BIGINT | FK(MEMBER), NOT NULL | 회원 ID |
+| title | TEXT | NULL | 제목 |
 | content | TEXT | NOT NULL | 리뷰 내용 |
+| party_size | INT | NOT NULL | 방문 인원 수 |
 | score_taste | DECIMAL(3,2) | NOT NULL | 맛 점수 (0.00~5.00) |
 | score_service | DECIMAL(3,2) | NOT NULL | 서비스 점수 (0.00~5.00) |
 | score_mood | DECIMAL(3,2) | NOT NULL | 분위기 점수 (0.00~5.00) |
 | score_price | DECIMAL(3,2) | NOT NULL | 가격 점수 (0.00~5.00) |
 | score_calculated | DECIMAL(3,2) | NOT NULL | 계산된 종합 점수 (가중합) |
 | status | VARCHAR(20) | NOT NULL, DEFAULT 'PENDING' | 리뷰 상태 (PENDING, APPROVED, REJECTED, BLIND_HELD, PUBLIC, SUSPENDED) |
-| is_revisit | BOOLEAN | NOT NULL, DEFAULT false | 재방문 여부 |
 | visit_date | DATE | NOT NULL | 방문일 |
-| like_count | INT | NOT NULL, DEFAULT 0 | 좋아요 수 |
+| visit_count | INT | NOT NULL, DEFAULT 0 | 해당 가게 방문 횟수 (PUBLIC 기준) |
+| helpful_count | INT | NOT NULL, DEFAULT 0 | 도움이 됨 수 |
 | admin_comment | TEXT | NULL | 관리자 코멘트 (반려 사유 등) |
 | created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 작성일시 (시간 감가상각 기준, updatable=false) |
 | updated_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE | 수정일시 |
@@ -86,6 +88,23 @@
 - INDEX: store_id, member_id
 - INDEX: status, created_at
 - COMPOSITE INDEX: (store_id, status)
+
+---
+
+## 3-1. MEMBER_STORE_VISIT (회원-가게 방문 횟수)
+
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | BIGINT | PK, AUTO_INCREMENT | 방문 ID |
+| member_id | BIGINT | FK(MEMBER), NOT NULL | 회원 ID |
+| store_id | BIGINT | FK(STORE), NOT NULL | 가게 ID |
+| visit_count | INT | NOT NULL, DEFAULT 0 | 누적 방문 횟수 (PUBLIC 기준) |
+| created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 생성일시 |
+| updated_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE | 수정일시 |
+
+**Indexes:**
+- UNIQUE INDEX: (member_id, store_id)
+- INDEX: member_id, store_id
 
 ---
 
@@ -147,14 +166,14 @@
 
 ---
 
-## 8. REVIEW_LIKE (리뷰 좋아요)
+## 8. REVIEW_HELPFUL (리뷰 도움됨)
 
 | 컬럼명 | 타입 | 제약조건 | 설명 |
 |--------|------|----------|------|
-| id | BIGINT | PK, AUTO_INCREMENT | 좋아요 ID |
+| id | BIGINT | PK, AUTO_INCREMENT | 도움됨 ID |
 | review_id | BIGINT | FK(REVIEW), NOT NULL | 리뷰 ID |
 | member_id | BIGINT | FK(MEMBER), NOT NULL | 회원 ID |
-| created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 좋아요 일시 |
+| created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 도움됨 일시 |
 
 **Indexes:**
 - UNIQUE INDEX: (review_id, member_id) - 중복 방지
@@ -237,7 +256,7 @@
 
 ```
 MEMBER (1) ----< (N) REVIEW
-MEMBER (1) ----< (N) REVIEW_LIKE
+MEMBER (1) ----< (N) REVIEW_HELPFUL
 MEMBER (1) ----< (N) COMMENT
 MEMBER (1) ----< (N) BOARD
 MEMBER (1) ----< (N) STORE_SCRAP
@@ -255,7 +274,7 @@ CATEGORY (1) ----< (N) CATEGORY (자기참조, parent-child)
 REGION (1) ----< (N) REGION (자기참조, parent-child)
 
 REVIEW (1) ----< (N) REVIEW_IMAGE
-REVIEW (1) ----< (N) REVIEW_LIKE
+REVIEW (1) ----< (N) REVIEW_HELPFUL
 REVIEW (1) ----< (N) COMMENT
 
 BOARD (1) ----< (N) COMMENT

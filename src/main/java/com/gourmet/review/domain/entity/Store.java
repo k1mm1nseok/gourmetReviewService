@@ -124,6 +124,15 @@ public class Store extends BaseEntity {
     }
 
     /**
+     * 리뷰 삭제 시 호출
+     */
+    public void decrementReviewCount() {
+        if (this.reviewCount > 0) {
+            this.reviewCount--;
+        }
+    }
+
+    /**
      * PUBLIC 상태 리뷰 추가 시 호출
      */
     public void incrementReviewCountValid() {
@@ -139,6 +148,11 @@ public class Store extends BaseEntity {
             this.reviewCountValid--;
             updateBlindStatus();
         }
+    }
+
+    public void updateReviewCountValid(int count) {
+        this.reviewCountValid = Math.max(count, 0);
+        updateBlindStatus();
     }
 
     /**

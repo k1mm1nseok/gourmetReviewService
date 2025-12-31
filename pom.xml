@@ -22,6 +22,7 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- surefire(JUnit5): 기본은 느린 시뮬레이션(@Tag("slow")) 제외 -->
     </properties>
 
     <dependencies>
@@ -81,7 +82,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -109,6 +110,15 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- JUnit5 @Tag 필터(JUnit Platform). 기본 test에서는 느린 시뮬레이션 제외 -->
+                    <argLine>-Djunit.platform.tags.exclude=slow</argLine>
                 </configuration>
             </plugin>
         </plugins>

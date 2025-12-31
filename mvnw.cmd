@@ -107,13 +107,11 @@ cd "%EXEC_DIR%"
 
 :endDetectBaseDir
 
-IF NOT EXIST "%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.jar" goto downloadWrapper
-
-@REM Use the maven-wrapper.jar if it exists
-set WRAPPER_JAR="%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.jar"
+set WRAPPER_JAR=%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-wrapper.jar
 set WRAPPER_LAUNCHER=org.apache.maven.wrapper.MavenWrapperMain
+set WRAPPER_URL=https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar
 
-set WRAPPER_URL="https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar"
+IF NOT EXIST "%WRAPPER_JAR%" goto downloadWrapper
 
 goto runWrapper
 
@@ -159,11 +157,11 @@ IF NOT %WRAPPER_SHA_256_SUM%=="" (
 @REM work with both Windows and non-Windows executions.
 set MAVEN_CMD_LINE_ARGS=%*
 
-%JAVA_HOME%\bin\java.exe ^
+"%JAVA_HOME%\bin\java.exe" ^
   %JVM_CONFIG_MAVEN_PROPS% ^
   %MAVEN_OPTS% ^
   %MAVEN_DEBUG_OPTS% ^
-  -classpath %WRAPPER_JAR% ^
+  -classpath "%WRAPPER_JAR%" ^
   "-Dmaven.multiModuleProjectDirectory=%MAVEN_PROJECTBASEDIR%" ^
   %WRAPPER_LAUNCHER% %MAVEN_CONFIG% %*
 if ERRORLEVEL 1 goto error

@@ -8,19 +8,19 @@ import lombok.*;
  * 회원이 리뷰에 "도움이 돼요" 표시
  */
 @Entity
-@Table(name = "review_like",
+@Table(name = "review_helpful",
        uniqueConstraints = {
-           @UniqueConstraint(name = "uk_review_like", columnNames = {"review_id", "member_id"})
+           @UniqueConstraint(name = "uk_review_helpful", columnNames = {"review_id", "member_id"})
        },
        indexes = {
-           @Index(name = "idx_review_like_review", columnList = "review_id"),
-           @Index(name = "idx_review_like_member", columnList = "member_id")
+           @Index(name = "idx_review_helpful_review", columnList = "review_id"),
+           @Index(name = "idx_review_helpful_member", columnList = "member_id")
        })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ReviewLike extends BaseEntity {
+public class ReviewHelpful extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

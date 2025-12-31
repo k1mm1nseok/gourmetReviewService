@@ -1,8 +1,8 @@
 # Gourmet Review Service - Backend Architecture & API Specification
 
-**Version:** 1.0
-**Date:** 2025-12-11
-**Based on:** review-policy v1.3.2, functional-requirements v1.0, agents.md
+**Version:** 1.1
+**Date:** 2025-12-31
+**Based on:** review-policy v1.3.3, functional-requirements v1.0, agents.md
 
 ---
 
@@ -98,7 +98,7 @@ src/main/java/com/gourmet/review
 │   │   ├── Category.java
 │   │   ├── Region.java
 │   │   ├── ReviewImage.java
-│   │   ├── ReviewLike.java
+│   │   ├── ReviewHelpful.java
 │   │   ├── StoreScrap.java
 │   │   ├── StoreAward.java
 │   │   ├── MemberFollow.java
@@ -189,37 +189,12 @@ src/main/java/com/gourmet/review
 
 ### 1. 다차원 평점 가중치 불일치 (중요도: 높음)
 
-**위치:** `Review.java:139-152` (calculateScore 메서드)
+**상태:** ✅ 해결됨
 
-**문제점:**
-- **정책 문서 (review-policy-v1.3.2, functional-requirements):**
-  - 맛 (Taste): **40%**
-  - 가성비 (Value): **30%**
-  - 분위기 (Ambiance): **15%**
-  - 접객 (Service): **15%**
+- 정책 문서(review-policy / functional-requirements): 40/30/15/15
+- 현재 `Review.java` 구현도 40/30/15/15로 일치함
 
-- **현재 Entity 구현:**
-  ```java
-  BigDecimal tasteWeight = new BigDecimal("0.50");      // 50% ❌
-  BigDecimal serviceWeight = new BigDecimal("0.20");    // 20% ❌
-  BigDecimal moodWeight = new BigDecimal("0.15");       // 15% ✅
-  BigDecimal priceWeight = new BigDecimal("0.15");      // 15% ✅
-  ```
-
-**수정 권장:**
-```java
-// Review.java - calculateScore() 메서드 수정
-BigDecimal tasteWeight = new BigDecimal("0.40");      // 40%
-BigDecimal valueWeight = new BigDecimal("0.30");      // 30%
-BigDecimal ambianceWeight = new BigDecimal("0.15");   // 15%
-BigDecimal serviceWeight = new BigDecimal("0.15");    // 15%
-
-this.scoreCalculated = scoreTaste.multiply(tasteWeight)
-        .add(scorePrice.multiply(valueWeight))        // 가성비
-        .add(scoreMood.multiply(ambianceWeight))      // 분위기
-        .add(scoreService.multiply(serviceWeight))    // 접객
-        .setScale(2, RoundingMode.HALF_UP);
-```
+(과거 버전에서 50/20/15/15로 구현된 이력이 있었으나 현재는 정합화되어 있음)
 
 ---
 
@@ -249,11 +224,11 @@ ALTER TABLE review
 
 **옵션 2: Entity 필드명만 변경 (하위 호환성 유지)**
 ```java
-// Review.java
-@Column(name = "score_price", ...)
+// Review.java (예시)
+@Column(name = "score_price")
 private BigDecimal scoreValue;  // 가성비로 의미 명확화
 
-@Column(name = "score_mood", ...)
+@Column(name = "score_mood")
 private BigDecimal scoreAmbiance;  // 분위기로 용어 통일
 ```
 
@@ -261,33 +236,24 @@ private BigDecimal scoreAmbiance;  // 분위기로 용어 통일
 
 ### 3. MemberTier Enum 승급 요건 불일치 (중요도: 높음)
 
-**위치:** `MemberTier.java:13-17`
+- (문서 작성 시점의) 요구사항과 코드 요건이 다른 부분이 있었으나,
+  현재 프로젝트는 **기능 요구사항 v1.0을 기준으로 우선 구현**되었습니다.
+- 승급/강등 로직은 배치(`ReviewPolicyJobServiceImpl.runTierEvaluation`)로 일부만 구현되어 있으며,
+  "검수 통과 리뷰 수" 같은 정밀 조건은 스키마/집계 필드 부재로 TODO 상태입니다.
 
-**문제점:**
+**현재 구현 상태(요약)**
+- tier 가중치(0.5/1.0/1.5/2.0/0.0)는 정책대로 점수 계산에 반영됨
+- tier 변경 시 과거 PUBLIC 리뷰가 반영되는 store 점수는 소급 재계산됨
+- 관리자가 회원 tier를 수동 변경하는 API가 존재함: `PATCH /admin/members/{memberId}/tier`
 
-| 등급 | 정책 문서 요구사항 | Enum 코드 요구사항 | 불일치 여부 |
-|-----|-------------------|-------------------|------------|
-| **BRONZE** | 기본 등급 | `reviewCount: 0, helpfulCount: 0` | ✅ 일치 |
-| **SILVER** | **리뷰 5개 (100자 이상) + 검수 통과 3개** | `reviewCount: 10, helpfulCount: 30` | ❌ **불일치** |
-| **GOLD** | 리뷰 30개 + 도움됨 100 | `reviewCount: 30, helpfulCount: 100` | ✅ 일치 |
-| **GOURMET** | 리뷰 100개 + 도움됨 500 + 운영진 승인 | `reviewCount: 100, helpfulCount: 500` | ⚠️ 승인 로직 누락 |
+---
 
-**수정 권장:**
+## Scoring / Trigger Notes (Implementation)
 
-```java
-// MemberTier.java
-public enum MemberTier {
-    BRONZE("브론즈", 0, 0),
-    SILVER("실버", 5, 0),        // 리뷰 5개 (검수 통과는 별도 검증)
-    GOLD("골드", 30, 100),
-    GOURMET("구르메", 100, 500),  // 운영진 승인은 별도 플래그 필요
-    BLACK("블랙", 0, 0);
-}
-```
-
-**추가 구현 필요:**
-- `Member` 엔티티에 `verifiedReviewCount` 필드 추가 (검수 통과 리뷰 수)
-- GOURMET 등급 승인을 위한 `isGourmetApproved` 플래그 추가
+- Store 점수/카운트 재계산은 `ReviewScoreService`가 담당하며,
+  이벤트/배치/정책에서는 storeId만 모은 뒤 `recalculateStoreScoresByStoreIds(...)` 단일 경로로 위임합니다.
+- 방문횟수(`review.visitCount`, `member_store_visit.visit_count`)는 리뷰가 `PUBLIC`으로 전환되는 시점에 반영됩니다.
+  - 운영자 승인 흐름 및 쿨다운 만료 자동 승인 흐름 모두 동일하게 적용됩니다.
 
 ---
 
@@ -326,7 +292,7 @@ public enum MemberTier {
 |---------|-----|--------|----------|
 | UNIQUE (member.email) | ✅ | `@Column(unique=true)` ✅ | ✅ |
 | UNIQUE (member.nickname) | ✅ | `@Column(unique=true)` ✅ | ✅ |
-| UNIQUE (review_like) | ✅ | `@UniqueConstraint` ✅ | ✅ |
+| UNIQUE (review_helpful) | ✅ | `@UniqueConstraint` ✅ | ✅ |
 | CHECK (comment.target) | ✅ | 코드 레벨 검증 필요 ⚠️ | ⚠️ |
 | CHECK (member_follow.self) | ✅ | `isSelfFollow()` 메서드 존재 ✅ | ✅ |
 
@@ -387,43 +353,30 @@ private void validateTarget() {
 
 # API Specification
 
-## 개요
+## Common Response Envelope
 
-모든 API는 다음 공통 규칙을 따릅니다:
-
-### 공통 응답 포맷 (ApiResponse<T>)
+모든 API 응답은 다음 공통 포맷을 따른다.
 
 ```json
 {
-  "code": "SUCCESS",
-  "message": "요청이 성공적으로 처리되었습니다.",
-  "data": { /* 실제 응답 데이터 */ }
+  "success": true,
+  "message": "optional",
+  "data": {}
 }
 ```
 
-### 에러 응답 포맷
+### Blind(Store.isBlind) 처리 규칙 (Frontend Contract)
 
-```json
-{
-  "code": "ERROR_CODE",
-  "message": "에러 메시지",
-  "data": null
-}
-```
+`STORE.is_blind = true`(블라인드)인 경우, **점수는 노출하지 않는다(null)**.
+텍스트/이미지/작성자/작성시각 등은 노출할 수 있다.
 
-### HTTP 상태 코드 정책
+- 스토어 리스트/검색의 `scoreWeighted`는 `null`
+- 스토어 상세의 `scoreWeighted`, `avgRating`는 `null`
+- 스토어 상세의 `recentReviews[*].score*`는 `null`
+- 스토어별 리뷰 목록의 `ReviewResponse.score*`는 `null`
+- 리뷰 상세의 `ReviewDetailResponse.score*`는 `null`
 
-| 상태 코드 | 용도 | 예시 |
-|-----------|------|------|
-| 200 OK | 성공 (조회, 수정) | GET /api/stores/123 |
-| 201 Created | 생성 성공 | POST /api/reviews |
-| 204 No Content | 삭제 성공 | DELETE /api/reviews/123 |
-| 400 Bad Request | 유효성 검증 실패 | 필수 필드 누락 |
-| 401 Unauthorized | 인증 실패 | 로그인 필요 |
-| 403 Forbidden | 권한 없음 | 타인 리뷰 삭제 시도 |
-| 404 Not Found | 리소스 없음 | 존재하지 않는 가게 ID |
-| 409 Conflict | 중복 리소스 | 이미 작성한 리뷰 존재 |
-| 500 Internal Server Error | 서버 오류 | 예상치 못한 예외 |
+(참고 구현: `StoreServiceImpl#getStoreDetail`, `ReviewServiceImpl#getStoreReviews`, `ReviewServiceImpl#getReview`)
 
 ---
 
@@ -648,8 +601,8 @@ private void validateTarget() {
   "data": {
     "id": 123,
     "name": "파스타하우스",
-    "category": "이탈리안",
-    "region": "역삼동",
+    "categoryName": "이탈리안",
+    "regionName": "역삼동",
     "address": "서울특별시 강남구 역삼동 123-45",
     "detailedAddress": "2층",
     "latitude": 37.12345678,
@@ -683,7 +636,7 @@ private void validateTarget() {
         "scoreService": 4.5,
         "content": "파스타가 정말 맛있었습니다!",
         "images": ["https://cdn.example.com/image1.jpg"],
-        "likeCount": 12,
+        "helpfulCount": 12,
         "createdAt": "2025-12-10T15:00:00"
       }
     ]
@@ -706,6 +659,10 @@ private void validateTarget() {
   }
 }
 ```
+
+**블라인드 상태에서 recentReviews 노출 정책:**
+- `recentReviews`는 제공되지만, 리뷰 점수(`scoreTaste/Value/Ambiance/Service`, `scoreCalculated`)는 `null`로 내려갑니다.
+- 즉, **텍스트(content)/이미지/helpfulCount 등만 공개**됩니다.
 
 ---
 
@@ -809,12 +766,13 @@ private void validateTarget() {
 ```json
 {
   "storeId": 123,
+  "title": "파스타 맛집 후기",
+  "partySize": 2,
   "scoreTaste": 4.5,
   "scoreValue": 4.0,
   "scoreAmbiance": 4.0,
   "scoreService": 4.5,
   "content": "파스타가 정말 맛있었습니다. 분위기도 좋고 재방문 의사 100%입니다!",
-  "isRevisit": false,
   "visitDate": "2025-12-10",
   "images": [
     "https://cdn.example.com/image1.jpg",
@@ -822,6 +780,7 @@ private void validateTarget() {
   ]
 }
 ```
+* `title`은 선택 입력입니다.
 
 **Response DTO:**
 ```json
@@ -833,7 +792,10 @@ private void validateTarget() {
     "storeId": 123,
     "storeName": "파스타하우스",
     "scoreCalculated": 4.275,
+    "visitCount": 1,
     "status": "PENDING",
+    "helpfulCount": 0,
+    "isHelpfulByMe": false,
     "createdAt": "2025-12-11T10:00:00"
   }
 }
@@ -860,14 +822,16 @@ private void validateTarget() {
 **Request DTO:**
 ```json
 {
+  "title": "수정된 제목",
+  "partySize": 2,
   "scoreTaste": 4.0,
   "scoreValue": 3.5,
   "scoreAmbiance": 4.0,
   "scoreService": 4.0,
-  "content": "수정된 리뷰 내용",
-  "isRevisit": true
+  "content": "수정된 리뷰 내용"
 }
 ```
+* `title`은 선택 입력입니다.
 
 **중요:** `created_at`은 변경되지 않음 (시간 감가상각 유지)
 
@@ -915,9 +879,10 @@ private void validateTarget() {
     "scoreService": 4.5,
     "scoreCalculated": 4.275,
     "content": "파스타가 정말 맛있었습니다!",
-    "isRevisit": false,
     "visitDate": "2025-12-10",
-    "likeCount": 12,
+    "visitCount": 2,
+    "helpfulCount": 12,
+    "isHelpfulByMe": true,
     "status": "PUBLIC",
     "images": [
       {
@@ -942,27 +907,27 @@ private void validateTarget() {
 
 ---
 
-### 5. 리뷰 좋아요 (도움됨)
+### 5. 리뷰 도움됨 (도움이 돼요)
 
 | 항목 | 내용 |
 |------|------|
-| **Method + Path** | `POST /api/reviews/{reviewId}/like` |
+| **Method + Path** | `POST /api/reviews/{reviewId}/helpful` |
 | **기능 요약** | 리뷰에 "도움이 돼요" 표시 |
 | **Path Parameter** | `reviewId`: 리뷰 ID |
 | **Response** | `ApiResponse<Void>` |
 
 **비즈니스 로직:**
 1. 리뷰 작성자의 `helpfulCount` 증가
-2. 중복 좋아요 방지 (UNIQUE 제약)
+2. 중복 도움됨 방지 (UNIQUE 제약)
 
 ---
 
-### 6. 리뷰 좋아요 취소
+### 6. 리뷰 도움됨 취소
 
 | 항목 | 내용 |
 |------|------|
-| **Method + Path** | `DELETE /api/reviews/{reviewId}/like` |
-| **기능 요약** | 좋아요 취소 |
+| **Method + Path** | `DELETE /api/reviews/{reviewId}/helpful` |
+| **기능 요약** | 도움됨 취소 |
 | **Path Parameter** | `reviewId`: 리뷰 ID |
 | **Response** | `ApiResponse<Void>` |
 
@@ -999,6 +964,8 @@ private void validateTarget() {
 ---
 
 ## Admin / Moderation
+
+> 보안(Spring Security role 기반 인가)은 추후 강화 예정이며, 현재는 서비스 레벨에서 `Member.role==ADMIN`을 체크한다.
 
 ### 1. 리뷰 검수 목록 조회 (관리자)
 
@@ -1048,7 +1015,7 @@ private void validateTarget() {
 **비즈니스 로직:**
 1. 리뷰 상태를 `APPROVED`로 변경
 2. 가게의 `reviewCountValid` 체크
-   - 5개 이상 → `PUBLIC`으로 전환, 평점 재계산
+   - 5개 이상 → `PUBLIC`으로 전환, 평점 재계산, `member_store_visit` 누적 방문 횟수 증가 및 리뷰 `visitCount` 기록
    - 5개 미만 → `BLIND_HELD`로 전환 (평점 미반영)
 
 ---
@@ -1078,24 +1045,44 @@ private void validateTarget() {
 | 항목 | 내용 |
 |------|------|
 | **Method + Path** | `PATCH /admin/members/{memberId}/tier` |
-| **기능 요약** | 회원 등급 강제 변경 (BLACK 등급 부여 등) |
+| **기능 요약** | 회원 등급 강제 변경 |
 | **Path Parameter** | `memberId`: 회원 ID |
-| **Request Body** | `MemberTierUpdateRequest` |
-| **Response** | `ApiResponse<Void>` |
+| **Request Body** | `AdminMemberTierUpdateRequest` |
+| **Response** | `ApiResponse<MemberResponse>` |
 | **권한** | ADMIN |
 
 **Request DTO:**
 ```json
 {
-  "tier": "BLACK",
-  "reason": "어뷰징 의심 계정으로 제재"
+  "tier": "BLACK"
 }
 ```
 
 **비즈니스 로직:**
-1. 회원 등급 변경
-2. BLACK 등급 부여 시 모든 리뷰를 `SUSPENDED` 상태로 전환
-3. 관련 가게 평점 재계산 (가중치 0 적용)
+1. 회원 tier 강제 변경
+2. tier가 실제로 변경되면, 과거 PUBLIC 리뷰가 반영된 스토어 점수를 소급 재계산하기 위해 `ReviewPolicyJobService.handleMemberTierChanged(memberId, oldTier, newTier)` 호출
+
+---
+
+### 4-1. 회원 권한(Role) 수동 조정 (관리자)
+
+| 항목 | 내용 |
+|------|------|
+| **Method + Path** | `PATCH /admin/members/{memberId}/role` |
+| **기능 요약** | 회원 role(USER/ADMIN) 강제 변경 |
+| **Path Parameter** | `memberId`: 회원 ID |
+| **Request Body** | `AdminMemberRoleUpdateRequest` |
+| **Response** | `ApiResponse<MemberResponse>` |
+| **권한** | ADMIN |
+
+**Request DTO:**
+```json
+{
+  "role": "ADMIN"
+}
+```
+
+**주의:** 자기 자신의 role 변경은 금지됩니다.
 
 ---
 

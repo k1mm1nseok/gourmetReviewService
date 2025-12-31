@@ -838,6 +838,29 @@
             "id": "review_member_id"
           },
           {
+            "name": "title",
+            "comment": "제목",
+            "dataType": "TEXT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_title"
+          },
+          {
             "name": "content",
             "comment": "리뷰 내용",
             "dataType": "TEXT",
@@ -859,6 +882,29 @@
               "widthDefault": 60
             },
             "id": "review_content"
+          },
+          {
+            "name": "party_size",
+            "comment": "방문 인원 수",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 90,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "review_party_size"
           },
           {
             "name": "score_taste",
@@ -999,10 +1045,10 @@
             "id": "review_status"
           },
           {
-            "name": "is_revisit",
-            "comment": "재방문 여부",
-            "dataType": "BOOLEAN",
-            "default": "false",
+            "name": "visit_count",
+            "comment": "해당 가게 방문 횟수 (PUBLIC 기준)",
+            "dataType": "INTEGER",
+            "default": "0",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
@@ -1015,11 +1061,11 @@
               "fk": false,
               "pfk": false,
               "widthName": 60,
-              "widthComment": 80,
+              "widthComment": 160,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "review_is_revisit"
+            "id": "review_visit_count"
           },
           {
             "name": "visit_date",
@@ -1045,8 +1091,8 @@
             "id": "review_visit_date"
           },
           {
-            "name": "like_count",
-            "comment": "좋아요 수",
+            "name": "helpful_count",
+            "comment": "도움이 됨 수",
             "dataType": "INT",
             "default": "0",
             "option": {
@@ -1060,12 +1106,12 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
+              "widthName": 70,
+              "widthComment": 80,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "review_like_count"
+            "id": "review_helpful_count"
           },
           {
             "name": "admin_comment",
@@ -1627,12 +1673,12 @@
         "id": "table_review_image"
       },
       {
-        "name": "REVIEW_LIKE",
-        "comment": "리뷰 좋아요",
+        "name": "REVIEW_HELPFUL",
+        "comment": "리뷰 도움됨",
         "columns": [
           {
             "name": "id",
-            "comment": "좋아요 ID",
+            "comment": "도움됨 ID",
             "dataType": "BIGINT",
             "default": "",
             "option": {
@@ -1701,7 +1747,7 @@
           },
           {
             "name": "created_at",
-            "comment": "좋아요 일시",
+            "comment": "도움됨 일시",
             "dataType": "DATETIME",
             "default": "CURRENT_TIMESTAMP",
             "option": {
@@ -1733,6 +1779,160 @@
         },
         "visible": true,
         "id": "table_review_like"
+      },
+      {
+        "name": "MEMBER_STORE_VISIT",
+        "comment": "회원-가게 방문 횟수",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "방문 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_store_visit_id"
+          },
+          {
+            "name": "member_id",
+            "comment": "회원 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_store_visit_member_id"
+          },
+          {
+            "name": "store_id",
+            "comment": "가게 ID",
+            "dataType": "BIGINT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_store_visit_store_id"
+          },
+          {
+            "name": "visit_count",
+            "comment": "누적 방문 횟수 (PUBLIC 기준)",
+            "dataType": "INT",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 140,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "member_store_visit_count"
+          },
+          {
+            "name": "created_at",
+            "comment": "생성일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 70,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "member_store_visit_created_at"
+          },
+          {
+            "name": "updated_at",
+            "comment": "수정일시",
+            "dataType": "DATETIME",
+            "default": "CURRENT_TIMESTAMP",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70,
+              "widthComment": 70,
+              "widthDataType": 60,
+              "widthDefault": 120
+            },
+            "id": "member_store_visit_updated_at"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 550,
+          "top": 900,
+          "zIndex": 9,
+          "widthName": 110,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "table_member_store_visit"
       },
       {
         "name": "COMMENT",
@@ -2471,6 +2671,46 @@
           "direction": "left"
         },
         "id": "rel_member_review_like"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_member",
+          "columnIds": ["member_id"],
+          "x": 250,
+          "y": 350,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_member_store_visit",
+          "columnIds": ["member_store_visit_member_id"],
+          "x": 550,
+          "y": 900,
+          "direction": "left"
+        },
+        "id": "rel_member_store_visit"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "table_store",
+          "columnIds": ["store_id"],
+          "x": 700,
+          "y": 350,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "table_member_store_visit",
+          "columnIds": ["member_store_visit_store_id"],
+          "x": 650,
+          "y": 900,
+          "direction": "right"
+        },
+        "id": "rel_store_member_store_visit"
       },
       {
         "identification": false,

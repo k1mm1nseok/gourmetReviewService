@@ -40,6 +40,7 @@ CREATE TABLE member (
   violation_count INTEGER NOT NULL DEFAULT 0,
   last_review_at TIMESTAMP NULL,
   is_deviation_target BOOLEAN NOT NULL DEFAULT FALSE,
+  is_phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -49,6 +50,7 @@ CREATE TABLE member (
 
 CREATE INDEX idx_member_tier ON member (tier);
 CREATE INDEX idx_member_last_review_at ON member (last_review_at);
+CREATE INDEX idx_member_phone_verified ON member (is_phone_verified);
 
 CREATE TRIGGER update_member_updated_at
   BEFORE UPDATE ON member
@@ -67,6 +69,7 @@ COMMENT ON COLUMN member.review_count IS '누적 리뷰 수';
 COMMENT ON COLUMN member.violation_count IS '누적 위반 횟수';
 COMMENT ON COLUMN member.last_review_at IS '마지막 리뷰 작성일시';
 COMMENT ON COLUMN member.is_deviation_target IS '편차 보정 대상 여부';
+COMMENT ON COLUMN member.is_phone_verified IS '휴대폰 인증 여부 (리뷰 작성 권한)';
 COMMENT ON COLUMN member.created_at IS '가입일시';
 COMMENT ON COLUMN member.updated_at IS '수정일시';
 
@@ -191,16 +194,18 @@ CREATE TABLE review (
   id BIGSERIAL PRIMARY KEY,
   store_id BIGINT NOT NULL,
   member_id BIGINT NOT NULL,
+  title TEXT NULL,
   content TEXT NOT NULL,
+  party_size INTEGER NOT NULL,
   score_taste DECIMAL(3,2) NOT NULL,
   score_service DECIMAL(3,2) NOT NULL,
   score_ambiance DECIMAL(3,2) NOT NULL,  -- 패치: score_mood → score_ambiance
   score_value DECIMAL(3,2) NOT NULL,     -- 패치: score_price → score_value
   score_calculated DECIMAL(3,2) NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-  is_revisit BOOLEAN NOT NULL DEFAULT FALSE,
   visit_date DATE NOT NULL,
-  like_count INTEGER NOT NULL DEFAULT 0,
+  visit_count INTEGER NOT NULL DEFAULT 0,
+  helpful_count INTEGER NOT NULL DEFAULT 0,
   admin_comment TEXT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -224,19 +229,51 @@ COMMENT ON TABLE review IS '리뷰';
 COMMENT ON COLUMN review.id IS '리뷰 ID';
 COMMENT ON COLUMN review.store_id IS '가게 ID';
 COMMENT ON COLUMN review.member_id IS '회원 ID';
+COMMENT ON COLUMN review.title IS '제목';
 COMMENT ON COLUMN review.content IS '리뷰 내용';
+COMMENT ON COLUMN review.party_size IS '방문 인원 수';
 COMMENT ON COLUMN review.score_taste IS '맛 점수 (0.00 ~ 5.00)';
 COMMENT ON COLUMN review.score_service IS '서비스 점수 (0.00 ~ 5.00)';
 COMMENT ON COLUMN review.score_ambiance IS '분위기 점수 (0.00 ~ 5.00)';
 COMMENT ON COLUMN review.score_value IS '가성비 점수 (0.00 ~ 5.00)';
 COMMENT ON COLUMN review.score_calculated IS '계산된 종합 점수 (가중합)';
 COMMENT ON COLUMN review.status IS '리뷰 상태 (PENDING, APPROVED, REJECTED, BLIND_HELD, PUBLIC, SUSPENDED)';
-COMMENT ON COLUMN review.is_revisit IS '재방문 여부';
 COMMENT ON COLUMN review.visit_date IS '방문일';
-COMMENT ON COLUMN review.like_count IS '좋아요 수';
+COMMENT ON COLUMN review.visit_count IS '해당 가게 방문 횟수 (PUBLIC 기준)';
+COMMENT ON COLUMN review.helpful_count IS '도움이 됨 수';
 COMMENT ON COLUMN review.admin_comment IS '관리자 코멘트 (반려 사유 등)';
 COMMENT ON COLUMN review.created_at IS '작성일시 (시간 감가상각 기준)';
 COMMENT ON COLUMN review.updated_at IS '수정일시';
+
+-- ============================================
+
+CREATE TABLE member_store_visit (
+  id BIGSERIAL PRIMARY KEY,
+  member_id BIGINT NOT NULL,
+  store_id BIGINT NOT NULL,
+  visit_count INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT uk_member_store_visit UNIQUE (member_id, store_id),
+  CONSTRAINT fk_member_store_visit_member FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE,
+  CONSTRAINT fk_member_store_visit_store FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_member_store_visit_member ON member_store_visit (member_id);
+CREATE INDEX idx_member_store_visit_store ON member_store_visit (store_id);
+
+CREATE TRIGGER update_member_store_visit_updated_at
+  BEFORE UPDATE ON member_store_visit
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+COMMENT ON TABLE member_store_visit IS '회원-가게별 누적 방문 횟수';
+COMMENT ON COLUMN member_store_visit.member_id IS '회원 ID';
+COMMENT ON COLUMN member_store_visit.store_id IS '가게 ID';
+COMMENT ON COLUMN member_store_visit.visit_count IS '누적 방문 횟수 (PUBLIC 기준)';
+COMMENT ON COLUMN member_store_visit.created_at IS '생성일시';
+COMMENT ON COLUMN member_store_visit.updated_at IS '수정일시';
 
 
 -- ============================================
@@ -297,35 +334,35 @@ COMMENT ON COLUMN review_image.display_order IS '표시 순서';
 
 
 -- ============================================
--- 8. REVIEW_LIKE (리뷰 좋아요)
+-- 8. REVIEW_HELPFUL (리뷰 도움됨)
 -- ============================================
 
-CREATE TABLE review_like (
+CREATE TABLE review_helpful (
   id BIGSERIAL PRIMARY KEY,
   review_id BIGINT NOT NULL,
   member_id BIGINT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  CONSTRAINT uk_review_like UNIQUE (review_id, member_id),
-  CONSTRAINT fk_review_like_review FOREIGN KEY (review_id) REFERENCES review (id) ON DELETE CASCADE,
-  CONSTRAINT fk_review_like_member FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE
+  CONSTRAINT uk_review_helpful UNIQUE (review_id, member_id),
+  CONSTRAINT fk_review_helpful_review FOREIGN KEY (review_id) REFERENCES review (id) ON DELETE CASCADE,
+  CONSTRAINT fk_review_helpful_member FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_review_like_review ON review_like (review_id);
-CREATE INDEX idx_review_like_member ON review_like (member_id);
+CREATE INDEX idx_review_helpful_review ON review_helpful (review_id);
+CREATE INDEX idx_review_helpful_member ON review_helpful (member_id);
 
-CREATE TRIGGER update_review_like_updated_at
-  BEFORE UPDATE ON review_like
+CREATE TRIGGER update_review_helpful_updated_at
+  BEFORE UPDATE ON review_helpful
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
-COMMENT ON TABLE review_like IS '리뷰 좋아요';
-COMMENT ON COLUMN review_like.id IS '좋아요 ID';
-COMMENT ON COLUMN review_like.review_id IS '리뷰 ID';
-COMMENT ON COLUMN review_like.member_id IS '회원 ID';
-COMMENT ON COLUMN review_like.created_at IS '좋아요 일시';
-COMMENT ON COLUMN review_like.updated_at IS '수정일시';
+COMMENT ON TABLE review_helpful IS '리뷰 도움됨';
+COMMENT ON COLUMN review_helpful.id IS '도움됨 ID';
+COMMENT ON COLUMN review_helpful.review_id IS '리뷰 ID';
+COMMENT ON COLUMN review_helpful.member_id IS '회원 ID';
+COMMENT ON COLUMN review_helpful.created_at IS '도움됨 일시';
+COMMENT ON COLUMN review_helpful.updated_at IS '수정일시';
 
 
 -- ============================================

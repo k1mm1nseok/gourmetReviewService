@@ -97,7 +97,39 @@ public class Member extends BaseEntity {
     @Builder.Default
     private Boolean isDeviationTarget = false;
 
+    /**
+     * 휴대폰 인증 여부
+     * 리뷰 작성시 인증 필수
+     */
+    @Column(name = "is_phone_verified", nullable = false)
+    @Builder.Default
+    private Boolean isPhoneVerified = false;
+
+
     // ===== 비즈니스 로직 메서드 =====
+
+    /**
+     * 휴대폰 인증 완료 처리
+     */
+    public void markPhoneVerified() {
+        this.isPhoneVerified = true;
+    }
+
+    /**
+     * 휴대폰 인증 해제 처리(운영/제재/정책 변경 등)
+     */
+    public void unmarkPhoneVerified() {
+        this.isPhoneVerified = false;
+    }
+
+    /**
+     * 리뷰 작성 등 특정 기능에서 휴대폰 인증이 필수일 때 사용하는 가드 메서드.
+     */
+    public void requirePhoneVerified() {
+        if (!Boolean.TRUE.equals(this.isPhoneVerified)) {
+            throw new IllegalStateException("휴대폰 인증이 필요합니다.");
+        }
+    }
 
     /**
      * 리뷰 작성 시 호출
@@ -141,8 +173,15 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 닉네임 변경
+     */
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    /**
      * 등급 자동 업데이트
-     * BLACK 등급은 수동으로만 부여 가능하므로 자동 업데이트에서 제외
+     * BLACK과 GOURMET 등급은 수동으로만 부여 가능하므로 자동 업데이트에서 제외
      */
     private void updateTier() {
         if (this.tier != MemberTier.BLACK) {
@@ -166,4 +205,38 @@ public class Member extends BaseEntity {
         }
         return lastReviewAt.isAfter(LocalDateTime.now().minusMonths(6));
     }
+
+    /**
+    * 관리자가 GOURMET 등급 부여
+    */
+    public void isGourmetApproved(){
+        this.tier = MemberTier.GOURMET;
+    }
+
+    /**
+     * 관리자가 회원 등급을 강제로 변경한다.
+     * - 기존 tier 값을 반환한다(소급 재계산/BLACK 처리 트리거 용)
+     * - 자동 tier 업데이트(updateTier)와는 별개로 동작한다.
+     */
+    public MemberTier forceUpdateTier(MemberTier newTier) {
+        MemberTier oldTier = this.tier;
+        this.tier = newTier;
+        return oldTier;
+    }
+
+    /**
+     * 관리자가 회원 role을 강제로 변경한다.
+     */
+    public MemberRole forceUpdateRole(MemberRole newRole) {
+        MemberRole oldRole = this.role;
+        this.role = newRole;
+        return oldRole;
+    }
+
+    /*
+     * todo
+     * gourmet 등급이 member 엔티티에서 승인 제도로 구현이 되어있는지 확인하기
+     * isGourmetApproved 어디에 추가해야 하는지 확인하기
+     * Review의 좋아요를 helpful로 바꾸고 리뷰에 달린 helpful의 합을 helpfulCount로 변경?
+     * */
 }
