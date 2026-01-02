@@ -93,3 +93,9 @@ application-prod.yml
 # Logs
 logs/
 *.log.*
+
+# Local recovery/debug artifacts
+_tmp*
+
+# Local Maven cache (should never be committed)
+.m2/
