@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 출력은 테스트 로그로 확인 가능(개발자가 로컬에서 확인).
  */
 @Tag("slow")
+@Disabled("로컬에서만 수동 실행하는 느린 시뮬레이션 테스트(기본 mvn test 제외)")
 class RatingSimulationTest {
 
     @Test

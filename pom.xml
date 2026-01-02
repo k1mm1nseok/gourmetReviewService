@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- surefire(JUnit5): 기본은 느린 시뮬레이션(@Tag("slow")) 제외 -->
+        <junit.platform.tags.exclude>slow</junit.platform.tags.exclude>
     </properties>
 
     <dependencies>
@@ -117,10 +118,42 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- JUnit5 @Tag 필터(JUnit Platform). 기본 test에서는 느린 시뮬레이션 제외 -->
-                    <argLine>-Djunit.platform.tags.exclude=slow</argLine>
+                    <!-- JUnit5 @Tag 필터(JUnit Platform) -->
+                    <properties>
+                        <configurationParameters>
+                            junit.platform.tags.exclude=${junit.platform.tags.exclude}
+                        </configurationParameters>
+                    </properties>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- 느린 시뮬레이션 테스트 실행용: -Psimulation -->
+        <profile>
+            <id>simulation</id>
+            <properties>
+                <!-- exclude를 비우면 XML 경고가 떠서 'none'으로 명시(의미상 제외 없음) -->
+                <junit.platform.tags.exclude>none</junit.platform.tags.exclude>
+                <junit.platform.tags.include>slow</junit.platform.tags.include>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <properties>
+                                <configurationParameters>
+                                    junit.platform.tags.exclude=${junit.platform.tags.exclude}
+                                    junit.platform.tags.include=${junit.platform.tags.include}
+                                </configurationParameters>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
